@@ -26,9 +26,6 @@ import (
 //         First: "This is an example.",
 //         Second: "example",
 //     }
-//
-// BUG: If fields reference each other in a loop, then the expander
-// will get stuck, recursing infinitely.
 func ExpandStruct(i interface{}, tag string) interface{} {
 	v := reflect.Indirect(reflect.ValueOf(i))
 	if v.Kind() != reflect.Struct {
