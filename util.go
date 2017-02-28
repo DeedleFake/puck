@@ -32,7 +32,7 @@ import (
 func ExpandStruct(i interface{}, tag string) interface{} {
 	v := reflect.Indirect(reflect.ValueOf(i))
 	if v.Kind() != reflect.Struct {
-		panic("Expected a struct, got a " + v.Kind().String())
+		panic(fmt.Errorf("Expected a struct, got a %v", v.Kind()))
 	}
 
 	first := -1
@@ -48,8 +48,20 @@ func ExpandStruct(i interface{}, tag string) interface{} {
 
 	r := reflect.New(v.Type()).Elem()
 
+	var stack []string
 	var expander func(string) string
 	expander = func(name string) string {
+		for _, prev := range stack {
+			if prev == name {
+				panic(fmt.Errorf("Recursive loop detected while expanding %q", name))
+			}
+		}
+
+		stack = append(stack, name)
+		defer func() {
+			stack = stack[:len(stack)-1]
+		}()
+
 		for i := 0; i < v.NumField(); i++ {
 			t := v.Type().Field(i).Tag.Get(tag)
 			if t != name {
