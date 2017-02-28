@@ -98,8 +98,6 @@ func vercmp(v1, v2 string) int {
 // Vercmp compares two versions. It follows the same rules as Arch
 // Linux's vercmp utility. For more info, see
 // https://www.archlinux.org/pacman/vercmp.8.html
-//
-// TODO: Add tests.
 func Vercmp(v1, v2 Version) int {
 	switch {
 	case v1.Epoch < v2.Epoch:
